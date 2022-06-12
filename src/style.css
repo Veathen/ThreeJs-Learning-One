@@ -36,4 +36,8 @@ h1 {
 
 section {
   height: 100vh;
+  font-size: 6rem;
+  display: grid;
+  place-items: center;
+  color: rgb(155, 57, 44);
 }

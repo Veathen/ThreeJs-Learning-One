@@ -2,7 +2,7 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
-import { CubeReflectionMapping } from "three";
+import { CubeReflectionMapping, Sphere } from "three";
 
 //Load envMap
 const textureLoader = new THREE.TextureLoader();
@@ -61,8 +61,8 @@ skylightF.add(skylight, "width").min(0).max(20);
 skylightF.add(skylight, "height").min(0).max(20);
 skylightF.add(skylight, "intensity").min(0).max(10);
 
-const pointLight2 = new THREE.PointLight(0x300af0, 7.24, 5, 9);
-pointLight2.position.set(-1, -1, 0);
+const pointLight2 = new THREE.PointLight(0x300af0, 9.3, 5, 9);
+pointLight2.position.set(-0.5, -1, -1);
 
 const pointLight2F = gui.addFolder("pointlight");
 
@@ -71,9 +71,17 @@ pointLight2F.add(pointLight2.position, "y").min(-6).max(10);
 pointLight2F.add(pointLight2.position, "z").min(-5).max(10);
 pointLight2F.add(pointLight2, "intensity").min(0).max(10);
 
-const pointLightHelper = new THREE.PointLightHelper(pointLight2, 0.4);
-scene.add(pointLightHelper);
+const pointLight2Color = {
+  color: 0x300af0,
+};
+pointLight2F.addColor(pointLight2Color, "color").onChange(() => {
+  pointLight2.color.set(pointLight2Color.color);
+});
+
 scene.add(pointLight2);
+//point light helper
+// const pointLightHelper = new THREE.PointLightHelper(pointLight2, 0.4);
+// scene.add(pointLightHelper);
 
 /**
  * Sizes
@@ -113,8 +121,8 @@ camera.position.z = 1;
 scene.add(camera);
 
 // Controls
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
+//const controls = new OrbitControls(camera, canvas);
+//controls.enableDamping = true;
 
 /**
  * Renderer
@@ -129,16 +137,42 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Animate
  */
+//mouse moving
+document.addEventListener("mousemove", onDocumentMouseMove);
+
+let mouseX = 0;
+let mouseY = 0;
+
+let targetX = 0;
+let targetY = 0;
+
+const windowX = window.innerWidth / 2;
+const windowY = window.innerHeight / 2;
+
+function onDocumentMouseMove(event) {
+  mouseX = event.clientX - windowX;
+  mouseY = event.clientY - windowY;
+}
+//scroll moving
+// const updateSphere = (event) => {
+//   sphere.position.y = window.scrollY * 001;
+// };
+// window.addEventListener("scroll", updateSphere);
 
 const clock = new THREE.Clock();
 
 const tick = () => {
+  targetX = mouseX * 0.001;
+  targetY = mouseY * 0.001;
   const elapsedTime = clock.getElapsedTime();
 
   // Update objects
   sphere.rotation.y = 0.5 * elapsedTime;
-  sphere.rotation.x = 0.2 * elapsedTime;
+  //sphere.rotation.x = 0.2 * elapsedTime;
 
+  sphere.rotation.y += 0.5 * (targetX - sphere.rotation.y);
+  sphere.rotation.x += 0.05 * (targetY - sphere.rotation.x);
+  sphere.position.z += -0.02 * (targetY - sphere.rotation.x);
   // Update Orbital Controls
   // controls.update()
 

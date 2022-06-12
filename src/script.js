@@ -5,8 +5,8 @@ import * as dat from "dat.gui";
 import { CubeReflectionMapping } from "three";
 
 //Load envMap
-var textureLoader = new THREE.TextureLoader();
-var texture = textureLoader.load("");
+const textureLoader = new THREE.TextureLoader();
+const normalTexture = textureLoader.load("/textures/DivotNormalMap.png");
 
 // Debug
 const gui = new dat.GUI();
@@ -18,7 +18,7 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 // Objects
-const sphereGeometry = new THREE.SphereBufferGeometry(0.5, 64, 64);
+const sphereGeometry = new THREE.SphereBufferGeometry(0.2, 64, 64);
 
 // Materials
 
@@ -27,22 +27,53 @@ material.color = new THREE.Color(0xff0000);
 material.roughness = 0.2;
 material.wireframe = false;
 material.metalness = 0.8;
+material.normalMap = normalTexture;
+
 // Mesh
 const sphere = new THREE.Mesh(sphereGeometry, material);
 scene.add(sphere);
 
 // Lights
 
-const pointLight = new THREE.PointLight(0xffffff, 2, 10);
-const skylight = new THREE.RectAreaLight(0xffffff, 0.3, 20, 20);
+const pointLight = new THREE.PointLight(0xffffff, 0.1, 10);
+
 pointLight.position.x = 2;
 pointLight.position.y = 3;
 pointLight.position.z = 4;
-skylight.position.x = 2;
-skylight.position.y = 3;
-skylight.position.z = 4;
+
+const skylight = new THREE.RectAreaLight(0xff0000, 0.5, 5, 9);
+skylight.position.x = -5.2;
+skylight.position.y = 2.3;
+skylight.position.z = 6.2;
+skylight.intensity = 3.56;
+skylight.width = 2.6;
+skylight.height = 1.5;
+
 scene.add(pointLight);
 scene.add(skylight);
+
+const skylightF = gui.addFolder("red skylight");
+
+skylightF.add(skylight.position, "x").min(-5).max(10);
+skylightF.add(skylight.position, "y").min(-6).max(10);
+skylightF.add(skylight.position, "z").min(-5).max(10);
+skylightF.add(skylight, "width").min(0).max(20);
+skylightF.add(skylight, "height").min(0).max(20);
+skylightF.add(skylight, "intensity").min(0).max(10);
+
+const pointLight2 = new THREE.PointLight(0x300af0, 7.24, 5, 9);
+pointLight2.position.set(-1, -1, 0);
+
+const pointLight2F = gui.addFolder("pointlight");
+
+pointLight2F.add(pointLight2.position, "x").min(-5).max(10);
+pointLight2F.add(pointLight2.position, "y").min(-6).max(10);
+pointLight2F.add(pointLight2.position, "z").min(-5).max(10);
+pointLight2F.add(pointLight2, "intensity").min(0).max(10);
+
+const pointLightHelper = new THREE.PointLightHelper(pointLight2, 0.4);
+scene.add(pointLightHelper);
+scene.add(pointLight2);
 
 /**
  * Sizes
@@ -78,7 +109,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 2;
+camera.position.z = 1;
 scene.add(camera);
 
 // Controls

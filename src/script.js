@@ -6,7 +6,7 @@ import { CubeReflectionMapping, Sphere } from "three";
 
 //Load envMap
 const textureLoader = new THREE.TextureLoader();
-const normalTexture = textureLoader.load("/textures/DivotNormalMap.png");
+const normalTexture = textureLoader.load("textures/DivotNormalMap.png");
 
 // Debug
 const gui = new dat.GUI();
